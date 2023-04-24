@@ -95,6 +95,7 @@ class Widgets
             ->create('subscribe', __('Subscribe links'), [Widgets::class, 'subscribe'], null, 'Feed subscription links (RSS or Atom)')
             ->addTitle(__('Subscribe'))
             ->setting('type', __('Feeds type:'), 'atom', 'combo', ['Atom' => 'atom', 'RSS' => 'rss2'])
+            ->setting('tags', __('Feed for tags'), true, 'check')
             ->addHomeOnly()
             ->addContentOnly()
             ->addClass()
@@ -423,6 +424,7 @@ class Widgets
 
         $p_title = __('This blog\'s entries %s feed');
         $c_title = __('This blog\'s comments %s feed');
+        $t_title = __('This tag\'s entries %s feed');
 
         $res = ($widget->title ? $widget->renderTitle(Html::escapeHTML($widget->title)) : '') .
             '<ul>';
@@ -437,6 +439,15 @@ class Widgets
             'href="' . dcCore::app()->blog->url . dcCore::app()->url->getURLFor('feed', $type . '/comments') . '" ' .
             'title="' . sprintf($c_title, ($type == 'atom' ? 'Atom' : 'RSS')) . '" class="feed">' .
             __('Comments feed') . '</a></li>';
+        }
+
+        if ($widget->tags) {
+            if (dcCore::app()->url->type == 'tag') {
+                $res .= '<li><a type="' . $mime . '" ' .
+                'href="' . dcCore::app()->blog->url . dcCore::app()->url->getURLFor('feed', 'tag/' . dcCore::app()->url->args . '/' . $type) . '" ' .
+                'title="' . sprintf($t_title, ($type == 'atom' ? 'Atom' : 'RSS')) . '" class="feed">' .
+                __('This tag\'s entries feed') . '</a></li>';
+            }
         }
 
         $res .= '</ul>';
